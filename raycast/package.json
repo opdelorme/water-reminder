@@ -31,6 +31,13 @@
       "subtitle": "Hydration",
       "description": "Pick which apps and browser tabs should pause the reminder when active.",
       "mode": "view"
+    },
+    {
+      "name": "debug",
+      "title": "Debug Meeting Detection",
+      "subtitle": "Hydration",
+      "description": "Show current mic state, running apps, browser tabs, and the detection verdict right now.",
+      "mode": "view"
     }
   ],
   "preferences": [
