@@ -1,5 +1,6 @@
 water-pulse
 mic-active
+list-apps
 *.o
 *.swiftmodule
 *.swiftdoc

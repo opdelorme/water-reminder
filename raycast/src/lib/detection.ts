@@ -58,23 +58,10 @@ export function micActive(helperPath: string): boolean {
   return res.status === 0;
 }
 
-export async function runningAppBundleIds(): Promise<Set<string>> {
-  const script = `
-    set output to ""
-    tell application "System Events"
-      repeat with p in (every process whose background only is false)
-        try
-          set bid to bundle identifier of p
-          if bid is not missing value then
-            set output to output & bid & linefeed
-          end if
-        end try
-      end repeat
-    end tell
-    return output
-  `;
+export async function runningAppBundleIds(helperPath: string): Promise<Set<string>> {
+  const probe = `${dirname(helperPath)}/list-apps`;
   try {
-    const { stdout } = await execFileAsync("/usr/bin/osascript", ["-e", script], { timeout: 5000 });
+    const { stdout } = await execFileAsync(probe, [], { timeout: 3000 });
     return new Set(
       stdout
         .split("\n")
@@ -143,7 +130,7 @@ export async function detectMeeting(
   const enabled = rules.filter((r) => r.enabled);
   if (enabled.length === 0) return { inMeeting: false, reason: "" };
 
-  const running = await runningAppBundleIds();
+  const running = await runningAppBundleIds(helperPath);
   const activeRules = enabled.filter((r) => running.has(r.bundleId));
   if (activeRules.length === 0) return { inMeeting: false, reason: "" };
 

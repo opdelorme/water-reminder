@@ -14,5 +14,11 @@ swiftc -O \
   MicActive.swift \
   -o mic-active
 
+swiftc -O \
+  -framework AppKit \
+  ListApps.swift \
+  -o list-apps
+
 echo "Built: $(pwd)/water-pulse"
 echo "Built: $(pwd)/mic-active"
+echo "Built: $(pwd)/list-apps"

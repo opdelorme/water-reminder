@@ -30,7 +30,7 @@ export default function Debug() {
     (async () => {
       try {
         const rules = await loadRules();
-        const running = await runningAppBundleIds();
+        const running = await runningAppBundleIds(helperPath);
         const runningIds = [...running].sort();
         const micOn = micActive(helperPath);
 
