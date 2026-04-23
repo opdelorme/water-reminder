@@ -20,11 +20,8 @@ export default async function main() {
 
   if (skipWhenInMeeting) {
     const rules = await loadRules();
-    const { inMeeting, reason } = await detectMeeting(rules, helperPath);
-    if (inMeeting) {
-      await showHUD(`🔕 Skipped — ${reason}`);
-      return;
-    }
+    const { inMeeting } = await detectMeeting(rules, helperPath);
+    if (inMeeting) return;
   }
 
   spawnSync("/usr/bin/pkill", ["-x", basename(helperPath)]);
