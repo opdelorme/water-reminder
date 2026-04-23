@@ -11,11 +11,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             overlay.orderFrontRegardless()
         }
         if let primary = NSScreen.screens.first {
-            let panel = makeButtonPanel(for: primary)
-            windows.append(panel)
-            panel.orderFrontRegardless()
+            let label = makeLabelPanel(for: primary)
+            windows.append(label)
+            label.orderFrontRegardless()
         }
         NSApp.activate(ignoringOtherApps: true)
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+            NSApp.terminate(nil)
+        }
     }
 
     private func makeOverlay(for screen: NSScreen) -> NSWindow {
@@ -66,8 +70,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         return window
     }
 
-    private func makeButtonPanel(for screen: NSScreen) -> NSWindow {
-        let size = NSSize(width: 260, height: 96)
+    private func makeLabelPanel(for screen: NSScreen) -> NSWindow {
+        let size = NSSize(width: 280, height: 72)
         let panel = NSPanel(
             contentRect: NSRect(origin: .zero, size: size),
             styleMask: [.borderless, .nonactivatingPanel, .fullSizeContentView],
@@ -78,7 +82,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         panel.backgroundColor = .clear
         panel.level = .screenSaver
         panel.hasShadow = true
-        panel.isMovableByWindowBackground = true
+        panel.ignoresMouseEvents = true
         panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
 
         let effect = NSVisualEffectView(frame: NSRect(origin: .zero, size: size))
@@ -86,21 +90,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         effect.blendingMode = .behindWindow
         effect.state = .active
         effect.wantsLayer = true
-        effect.layer?.cornerRadius = 18
+        effect.layer?.cornerRadius = 20
         effect.layer?.masksToBounds = true
 
-        let label = NSTextField(labelWithString: "💧 Time to hydrate")
-        label.font = .systemFont(ofSize: 14, weight: .semibold)
+        let label = NSTextField(labelWithString: "💧 Take a sip")
+        label.font = .systemFont(ofSize: 22, weight: .semibold)
         label.alignment = .center
-        label.frame = NSRect(x: 0, y: 58, width: size.width, height: 22)
+        label.frame = NSRect(x: 0, y: (size.height - 30) / 2, width: size.width, height: 30)
         effect.addSubview(label)
-
-        let button = NSButton(title: "Sip taken ✓", target: self, action: #selector(dismiss))
-        button.bezelStyle = .rounded
-        button.controlSize = .large
-        button.keyEquivalent = "\r"
-        button.frame = NSRect(x: 30, y: 16, width: size.width - 60, height: 32)
-        effect.addSubview(button)
 
         panel.contentView = effect
 
@@ -110,10 +107,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             y: sf.midY - size.height / 2
         ))
         return panel
-    }
-
-    @objc func dismiss() {
-        NSApp.terminate(nil)
     }
 }
 

@@ -14,9 +14,9 @@
       "name": "remind",
       "title": "Water Reminder (Background)",
       "subtitle": "Hydration",
-      "description": "Scheduled trigger — fires the pulsing overlay every 15 minutes unless a meeting is detected.",
+      "description": "Scheduled trigger — wakes every minute and fires the reminder whenever the user-configured interval (set via the menu bar) has elapsed and no meeting is active.",
       "mode": "no-view",
-      "interval": "15m"
+      "interval": "1m"
     },
     {
       "name": "sip-now",
@@ -38,6 +38,14 @@
       "subtitle": "Hydration",
       "description": "Show current mic state, running apps, browser tabs, and the detection verdict right now.",
       "mode": "view"
+    },
+    {
+      "name": "menu-bar",
+      "title": "Water Reminder Menu Bar",
+      "subtitle": "Hydration",
+      "description": "Menu bar indicator with live countdown to the next reminder, sip-now, skip-next, and quick links.",
+      "mode": "menu-bar",
+      "interval": "30s"
     }
   ],
   "preferences": [

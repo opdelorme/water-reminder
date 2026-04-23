@@ -4,6 +4,7 @@ import { existsSync } from "node:fs";
 import { basename } from "node:path";
 import { detectMeeting } from "./lib/detection";
 import { loadRules } from "./lib/storage";
+import { getIntervalMinutes, getLastFireAt, isPaused, recordFire } from "./lib/state";
 
 interface Prefs {
   helperPath: string;
@@ -18,6 +19,12 @@ export default async function main() {
     return;
   }
 
+  if (await isPaused()) return;
+
+  const [lastFire, intervalMin] = await Promise.all([getLastFireAt(), getIntervalMinutes()]);
+  const intervalMs = intervalMin * 60 * 1000;
+  if (lastFire != null && Date.now() - lastFire < intervalMs) return;
+
   if (skipWhenInMeeting) {
     const rules = await loadRules();
     const { inMeeting } = await detectMeeting(rules, helperPath);
@@ -31,4 +38,6 @@ export default async function main() {
     stdio: "ignore",
   });
   child.unref();
+
+  await recordFire();
 }
