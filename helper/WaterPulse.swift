@@ -102,9 +102,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         panel.contentView = effect
 
-        if let screen = NSScreen.main {
-            let sf = screen.visibleFrame
-            panel.setFrameOrigin(NSPoint(x: sf.midX - size.width / 2, y: sf.minY + 120))
+        let mouse = NSEvent.mouseLocation
+        let target = NSScreen.screens.first { NSMouseInRect(mouse, $0.frame, false) } ?? NSScreen.main
+        if let screen = target {
+            let sf = screen.frame
+            panel.setFrameOrigin(NSPoint(
+                x: sf.midX - size.width / 2,
+                y: sf.midY - size.height / 2
+            ))
         }
         return panel
     }
