@@ -119,7 +119,7 @@ export async function browserActiveUrls(bundleId: string): Promise<string[]> {
               set urls to urls & (URL of t) & linefeed
             end try
           end repeat
-        end tell
+        end repeat
       end tell
       return urls
     `;
