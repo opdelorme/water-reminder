@@ -9,10 +9,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             let overlay = makeOverlay(for: screen)
             windows.append(overlay)
             overlay.orderFrontRegardless()
+
+            let panel = makeButtonPanel(for: screen)
+            windows.append(panel)
+            panel.orderFrontRegardless()
         }
-        let panel = makeButtonPanel()
-        windows.append(panel)
-        panel.orderFrontRegardless()
         NSApp.activate(ignoringOtherApps: true)
     }
 
@@ -64,7 +65,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         return window
     }
 
-    private func makeButtonPanel() -> NSWindow {
+    private func makeButtonPanel(for screen: NSScreen) -> NSWindow {
         let size = NSSize(width: 260, height: 96)
         let panel = NSPanel(
             contentRect: NSRect(origin: .zero, size: size),
@@ -102,15 +103,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         panel.contentView = effect
 
-        let mouse = NSEvent.mouseLocation
-        let target = NSScreen.screens.first { NSMouseInRect(mouse, $0.frame, false) } ?? NSScreen.main
-        if let screen = target {
-            let sf = screen.frame
-            panel.setFrameOrigin(NSPoint(
-                x: sf.midX - size.width / 2,
-                y: sf.midY - size.height / 2
-            ))
-        }
+        let sf = screen.frame
+        panel.setFrameOrigin(NSPoint(
+            x: sf.midX - size.width / 2,
+            y: sf.midY - size.height / 2
+        ))
         return panel
     }
 
