@@ -6,10 +6,27 @@ Raycast extension + native macOS helper. Every 15 minutes the whole screen conto
 
 Raycast cannot draw screen overlays from inside its own process, so this repo ships two pieces:
 
-- `raycast/` — Raycast extension. A `no-view` background command runs every 15 min and spawns the helper. A second command triggers it manually.
-- `helper/` — Single-file Swift app. Transparent borderless `NSWindow` per display at `.screenSaver` level draws a pulsing `CAShapeLayer` border. A small HUD panel with a **Sip taken ✓** button dismisses all windows.
+- `raycast/` — Raycast extension. Three commands:
+  - **Water Reminder (Background)** — `no-view`, `interval: 15m`. Runs meeting detection, spawns the helper if clear.
+  - **Trigger Water Reminder Now** — manual override, bypasses detection.
+  - **Configure Meeting Detection** — view command. Toggle which apps / browsers suppress the reminder while active; edit meeting URL substrings for browsers.
+- `helper/` — Two Swift binaries:
+  - `water-pulse` — transparent borderless `NSWindow` per display at `.screenSaver` level, pulsing `CAShapeLayer` border, single **Sip taken ✓** HUD panel centered on the primary display.
+  - `mic-active` — one-shot probe; exits 0 if the default input device is in use anywhere on the system, 1 otherwise. Used as a cheap proxy for "call in progress."
 
-The extension just shells out to the helper binary — no IPC, no daemon.
+## Meeting detection
+
+On every scheduled fire, the background command:
+
+1. Loads rules from Raycast `LocalStorage` (defaults include Zoom, Teams, Slack, FaceTime, Webex, Chrome, Arc).
+2. Queries running apps via `osascript` → `System Events` → bundle identifiers of visible processes.
+3. Calls the `mic-active` probe.
+4. For any enabled rule whose bundle id is running:
+   - `kind: "app"` → skip if mic is active.
+   - `kind: "browser"` → AppleScript to the browser, collect tab URLs, skip if any contains a configured substring (e.g. `meet.google.com`, `zoom.us/j/`). If no URL hit but mic is active and the browser has any configured-domain tab open, also skip.
+5. On skip, `showHUD("🔕 Skipped — <reason>")` instead of spawning the pulse.
+
+Toggle the feature off globally via the extension preference **Skip reminders during meetings**.
 
 ## Setup
 
@@ -20,13 +37,14 @@ cd helper
 ./build.sh
 ```
 
-Produces `helper/water-pulse`. Test it:
+Produces two binaries: `helper/water-pulse` and `helper/mic-active`. Test them:
 
 ```bash
-./water-pulse
+./water-pulse          # expect pulsing blue border + Sip taken button
+./mic-active; echo $?  # 0 = mic in use, 1 = idle
 ```
 
-Screen border should pulse blue. Click **Sip taken ✓** to dismiss.
+Both binaries must live in the same directory — the extension reads the `helperPath` preference and finds `mic-active` next to `water-pulse`.
 
 ### 2. Install the Raycast extension
 

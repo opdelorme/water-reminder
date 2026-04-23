@@ -2,17 +2,19 @@
   "$schema": "https://www.raycast.com/schemas/extension.json",
   "name": "water-reminder",
   "title": "Water Reminder",
-  "description": "Pulsing blue screen border reminds you to drink water every 15 minutes. Dismiss with 'Sip taken'.",
+  "description": "Pulsing blue screen border reminds you to drink water every 15 minutes. Auto-skips when a meeting is detected.",
   "icon": "icon.png",
   "author": "tommy",
   "license": "MIT",
-  "categories": ["Productivity"],
+  "categories": [
+    "Productivity"
+  ],
   "commands": [
     {
       "name": "remind",
       "title": "Water Reminder (Background)",
       "subtitle": "Hydration",
-      "description": "Scheduled trigger — fires the pulsing overlay every 15 minutes.",
+      "description": "Scheduled trigger — fires the pulsing overlay every 15 minutes unless a meeting is detected.",
       "mode": "no-view",
       "interval": "15m"
     },
@@ -20,18 +22,34 @@
       "name": "sip-now",
       "title": "Trigger Water Reminder Now",
       "subtitle": "Hydration",
-      "description": "Manually trigger the pulsing overlay.",
+      "description": "Manually trigger the pulsing overlay (bypasses meeting detection).",
       "mode": "no-view"
+    },
+    {
+      "name": "configure",
+      "title": "Configure Meeting Detection",
+      "subtitle": "Hydration",
+      "description": "Pick which apps and browser tabs should pause the reminder when active.",
+      "mode": "view"
     }
   ],
   "preferences": [
     {
       "name": "helperPath",
       "title": "Helper Binary Path",
-      "description": "Absolute path to the compiled water-pulse binary.",
+      "description": "Absolute path to the compiled water-pulse binary. The mic-active probe is expected in the same directory.",
       "type": "textfield",
       "required": true,
       "default": "/Users/ismaelgirard/Documents/github-repos/water-reminder/helper/water-pulse"
+    },
+    {
+      "name": "skipWhenInMeeting",
+      "title": "Meeting Detection",
+      "description": "Skip the 15-minute reminder when a configured meeting app is active.",
+      "label": "Skip reminders during meetings",
+      "type": "checkbox",
+      "required": false,
+      "default": true
     }
   ],
   "dependencies": {
@@ -41,7 +59,7 @@
   "devDependencies": {
     "@raycast/eslint-config": "^1.0.11",
     "@types/node": "^20.12.12",
-    "@types/react": "^18.3.3",
+    "@types/react": "^19.2.14",
     "eslint": "^8.57.0",
     "prettier": "^3.3.3",
     "typescript": "^5.4.5"
