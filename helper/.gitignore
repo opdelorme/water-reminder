@@ -1,0 +1,5 @@
+water-pulse
+*.o
+*.swiftmodule
+*.swiftdoc
+.build/
