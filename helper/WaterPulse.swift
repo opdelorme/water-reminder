@@ -10,8 +10,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             windows.append(overlay)
             overlay.orderFrontRegardless()
         }
-        if let mainScreen = NSScreen.main {
-            let panel = makeButtonPanel(for: mainScreen)
+        if let primary = NSScreen.screens.first {
+            let panel = makeButtonPanel(for: primary)
             windows.append(panel)
             panel.orderFrontRegardless()
         }
